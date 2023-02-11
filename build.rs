@@ -142,6 +142,19 @@ fn lib_mode(lib: &str) -> &'static str {
 }
 
 fn get_ffmpeg_features(all: bool) -> Vec<String> {
+    if let Ok(features) = env::var("FFMPEG_FEATURES") {
+        return features
+            .split(" \t,;")
+            .filter_map(|s| {
+                if !s.is_empty() {
+                    Some(s.to_owned())
+                } else {
+                    None
+                }
+            })
+            .collect();
+    }
+
     let out_dir = std::env::var_os("OUT_DIR").expect("output directory is not defined");
 
     std::fs::create_dir_all(&out_dir).expect("unable to create the output directory");
